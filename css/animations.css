@@ -1,0 +1,84 @@
+/* ============================================================
+   animations.css  —  Todos los @keyframes en un solo lugar.
+   ============================================================ */
+
+@keyframes aparecerLinea {
+  0%   { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  100% { opacity: 1; transform: translateY(0);   filter: blur(0); }
+}
+
+@keyframes respirar {
+  0%, 100% { opacity: .35; }
+  50%      { opacity: .8;  }
+}
+
+@keyframes latido {
+  0%, 100% { transform: scale(1);   opacity: .8; }
+  50%      { transform: scale(1.6); opacity: 1;  }
+}
+
+/* Girasol principal: crece desde semilla */
+@keyframes crecerFlor {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(.05) rotate(-8deg); }
+  25%  { opacity: 1; }
+  70%  { transform: translate(-50%, -50%) scale(1.05) rotate(2deg); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
+}
+
+/* Oscilación suave de las flores del jardín */
+@keyframes mecerse {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50%      { transform: rotate(2.5deg); }
+}
+
+/* Pétalos individuales que respiran (brillo) */
+@keyframes petaloBrilla {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.25); }
+}
+
+@keyframes vinetaRespira {
+  0%, 100% { opacity: .85; }
+  50%      { opacity: 1;   }
+}
+
+@keyframes granoMueve {
+  0%   { transform: translate(0,0); }
+  100% { transform: translate(-6%, 4%); }
+}
+
+@keyframes parpadeoTenue {
+  0%, 100% { opacity: .35; }
+  50%      { opacity: .8;  }
+}
+
+/* Título grande final que respira luz */
+@keyframes tituloGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(232,178,76,.5), 0 0 50px rgba(200,121,31,.3); }
+  50%      { text-shadow: 0 0 34px rgba(247,212,136,.8), 0 0 80px rgba(232,178,76,.5); }
+}
+
+.titulo-final {
+  font-family: var(--script);
+  font-size: clamp(2.6rem, 12vw, 6rem);
+  color: var(--dorado-claro);
+  letter-spacing: .06em;
+  animation: tituloGlow 4s ease-in-out infinite;
+}
+
+/* clase util: cursor de máquina de escribir */
+.cursor-typing::after {
+  content: "";
+  display: inline-block;
+  width: 2px; height: 1em;
+  margin-left: 2px;
+  background: currentColor;
+  vertical-align: text-bottom;
+  animation: parpadeoTenue .8s steps(2) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .girasol { animation: none !important; }
+  #girasol-principal.crece { animation: none; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  .titulo-final { animation: none; }
+}

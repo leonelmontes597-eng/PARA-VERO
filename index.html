@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <title>Para Vero 🌻</title>
+  <meta name="theme-color" content="#060402" />
+
+  <!-- Tipografías cálidas y elegantes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Petit+Formal+Script&display=swap" rel="stylesheet" />
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/flowers.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- Precargador con semilla latiendo (evita el flash inicial) -->
+  <div id="preload"><div class="brote"></div></div>
+
+  <!-- Lienzos -->
+  <canvas id="fireflies-canvas"></canvas>
+  <canvas id="particles-canvas"></canvas>
+  <canvas id="trail-canvas"></canvas>
+
+  <!-- Jardín (flores que aparecen alrededor) -->
+  <div id="jardin"></div>
+
+  <!-- Girasol protagonista (crece desde la semilla) -->
+  <div id="girasol-principal"></div>
+
+  <!-- ================= ESCENAS ================= -->
+  <main id="escenas">
+
+    <!-- ESCENA 1 -->
+    <section id="escena-intro" class="escena">
+      <div class="contenido parallax" data-depth="1.4"></div>
+      <button id="btn-descubrir" class="btn">Descubrir</button>
+    </section>
+
+    <!-- ESCENA 2 -->
+    <section id="escena-semilla" class="escena">
+      <div class="semilla-luz"></div>
+      <div class="contenido"></div>
+    </section>
+
+    <!-- ESCENA 3 + 4 -->
+    <section id="escena-jardin" class="escena">
+      <div class="contenido"></div>
+    </section>
+
+    <!-- ESCENA 5 -->
+    <section id="escena-nombre" class="escena">
+      <div class="contenido"></div>
+    </section>
+
+    <!-- ESCENA 6 -->
+    <section id="escena-corazon" class="escena">
+      <div class="glow-hueco"></div>
+      <div class="contenido"></div>
+    </section>
+
+    <!-- ESCENA 7 -->
+    <section id="escena-fotos" class="escena">
+      <div id="foto-marco"></div>
+      <p id="foto-frase"></p>
+      <div class="contenido"></div>
+    </section>
+
+    <!-- ESCENA 8 -->
+    <section id="escena-carta" class="escena">
+      <div id="sobre">
+        <div class="tapa-sobre">
+          <div class="sello">V</div>
+          <div class="pista">Toca para abrir</div>
+        </div>
+      </div>
+      <div id="carta-hoja"></div>
+    </section>
+
+    <!-- ESCENA 9 -->
+    <section id="escena-sorpresa" class="escena">
+      <div class="contenido"></div>
+      <div id="caja">
+        <div class="lazo">🎀</div>
+        <div class="tapa"></div>
+        <div class="cuerpo"></div>
+      </div>
+    </section>
+
+    <!-- ESCENA 10 -->
+    <section id="escena-final" class="escena">
+      <div class="contenido"></div>
+    </section>
+
+  </main>
+
+  <!-- Capas cinematográficas -->
+  <div id="vineta"></div>
+  <div id="grano"></div>
+  <div class="letterbox top"></div>
+  <div class="letterbox bottom"></div>
+
+  <!-- Indicador de avance -->
+  <div id="progreso"></div>
+
+  <!-- Scripts (orden importa) -->
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/flowers.js"></script>
+  <script src="js/transitions.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

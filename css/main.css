@@ -1,0 +1,281 @@
+/* ============================================================
+   main.css  —  Variables, base, tipografía y capas de cine.
+   Cambia los colores aquí (una sola vez) y afecta a todo.
+   ============================================================ */
+
+:root {
+  /* ---- Paleta (edítala aquí) ---- */
+  --negro:        #060402;
+  --negro-2:      #0d0a06;
+  --dorado:       #e8b24c;
+  --dorado-claro: #f7d488;
+  --ambar:        #c8791f;
+  --amarillo:     #ffd75e;
+  --blanco-suave: #fff7e6;
+  --texto:        #f3e4c4;
+  --texto-tenue:  #b8a685;
+
+  /* ---- Sombras / glow ---- */
+  --glow-dorado: 0 0 24px rgba(232,178,76,.55), 0 0 60px rgba(200,121,31,.28);
+  --glow-suave:  0 0 14px rgba(247,212,136,.5);
+
+  /* ---- Tipografía ---- */
+  --serif:  "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --script: "Petit Formal Script", "Cormorant Garamond", cursive;
+
+  --ritmo: 1; /* lo sobreescribe JS desde CONFIG.ritmo */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--negro);
+  color: var(--texto);
+  font-family: var(--serif);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  /* fondo con profundidad: un halo cálido muy tenue detrás de todo */
+  background:
+    radial-gradient(120% 90% at 50% 60%, rgba(40,26,8,.55) 0%, rgba(6,4,2,1) 62%),
+    var(--negro);
+}
+
+/* ---------- Lienzos a pantalla completa ---------- */
+#particles-canvas,
+#fireflies-canvas,
+#trail-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+#particles-canvas { z-index: 2; }
+#fireflies-canvas { z-index: 1; }
+#trail-canvas     { z-index: 40; }
+
+/* ---------- Contenedor de escenas ---------- */
+#escenas {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;   /* clave: deja pasar el toque hasta las flores del jardín */
+}
+
+.escena {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(20px, 6vw, 60px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity calc(1.1s * var(--ritmo)) ease;
+  will-change: opacity;
+  pointer-events: none;   /* la capa no bloquea; los hijos interactivos se reactivan abajo */
+}
+
+/* Solo estos elementos reciben toques; así el jardín (debajo) sí responde */
+.btn, #sobre, #caja, #foto-marco, #carta-hoja { pointer-events: auto; }
+.escena.activa {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* capa que se mueve con parallax (giro/mouse) */
+.parallax { transition: transform .4s cubic-bezier(.2,.7,.2,1); will-change: transform; }
+
+/* ---------- Tipografía de escena ---------- */
+.linea {
+  font-size: clamp(1.4rem, 4.6vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.4;
+  max-width: 20ch;
+  color: var(--texto);
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(6px);
+  margin: .35em 0;
+  text-shadow: 0 0 30px rgba(232,178,76,.15);
+}
+.linea.ver {
+  animation: aparecerLinea calc(1.4s * var(--ritmo)) forwards;
+}
+.linea.pequena { font-size: clamp(1rem, 3.4vw, 1.3rem); color: var(--texto-tenue); }
+.linea.grande  { font-size: clamp(1.8rem, 6vw, 3rem); }
+
+/* ---------- Botones ---------- */
+.btn {
+  margin-top: clamp(28px, 5vh, 48px);
+  padding: .85em 2.4em;
+  font-family: var(--serif);
+  font-size: clamp(1rem, 3.4vw, 1.25rem);
+  letter-spacing: .04em;
+  color: var(--dorado-claro);
+  background: rgba(232,178,76,.06);
+  border: 1px solid rgba(232,178,76,.45);
+  border-radius: 40px;
+  cursor: pointer;
+  position: relative;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: transform .5s ease, background .5s ease, color .5s ease, box-shadow .5s ease;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  overflow: hidden;
+}
+.btn.ver { animation: aparecerLinea calc(1.2s * var(--ritmo)) forwards; }
+.btn::after { /* respiración muy sutil */
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--glow-suave);
+  opacity: .5;
+  animation: respirar calc(3.4s * var(--ritmo)) ease-in-out infinite;
+}
+.btn:hover, .btn:focus-visible {
+  color: var(--negro);
+  background: var(--dorado);
+  box-shadow: var(--glow-dorado);
+  transform: translateY(-2px);
+  outline: none;
+}
+.btn:active { transform: translateY(0) scale(.98); }
+
+/* ---------- Control de música (discreto) ---------- */
+#audio-toggle {
+  position: fixed;
+  top: calc(14px + env(safe-area-inset-top, 0px));
+  right: 14px;
+  z-index: 60;
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(232,178,76,.35);
+  background: rgba(6,4,2,.5);
+  color: var(--dorado-claro);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .6s ease, transform .3s ease, background .3s ease;
+  backdrop-filter: blur(4px);
+}
+#audio-toggle.visible { opacity: .85; }
+#audio-toggle:hover { transform: scale(1.06); background: rgba(232,178,76,.14); }
+#audio-toggle svg { width: 20px; height: 20px; }
+#audio-toggle .off { display: none; }
+#audio-toggle.muted .on { display: none; }
+#audio-toggle.muted .off { display: block; }
+
+/* ---------- Indicador de avance (rastro de pétalos) ---------- */
+#progreso {
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  z-index: 55;
+  display: flex; gap: 9px;
+  opacity: 0; transition: opacity .6s ease;
+}
+#progreso.visible { opacity: .9; }
+#progreso .paso {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(232,178,76,.22);
+  transition: background .5s ease, box-shadow .5s ease, transform .5s ease;
+}
+#progreso .paso.hecho { background: var(--dorado); box-shadow: var(--glow-suave); }
+#progreso .paso.actual { transform: scale(1.5); }
+
+/* ---------- Precargador ---------- */
+#preload {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  background: var(--negro);
+  transition: opacity .8s ease;
+}
+#preload.oculto { opacity: 0; pointer-events: none; }
+#preload .brote {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--dorado-claro);
+  box-shadow: var(--glow-dorado);
+  animation: latido 1.6s ease-in-out infinite;
+}
+
+/* ============================================================
+   CAPAS CINEMATOGRÁFICAS (grano, viñeta, letterbox)
+   ============================================================ */
+
+/* Viñeta que respira, siempre encima */
+#vineta {
+  position: fixed; inset: 0; z-index: 45; pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0,0,0,.62) 100%);
+  animation: vinetaRespira 9s ease-in-out infinite;
+}
+
+/* Grano de película sutil */
+#grano {
+  position: fixed; inset: -50%; z-index: 46; pointer-events: none;
+  opacity: .05; mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  animation: granoMueve .6s steps(3) infinite;
+}
+
+/* Barras de cine (letterbox) que entran solo en momentos clave */
+.letterbox {
+  position: fixed; left: 0; right: 0; z-index: 44; pointer-events: none;
+  height: 0; background: #000;
+  transition: height .9s cubic-bezier(.6,0,.2,1);
+}
+.letterbox.top { top: 0; }
+.letterbox.bottom { bottom: 0; }
+body.cine .letterbox { height: 8vh; }
+
+/* Respeto por quien prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  #grano, #vineta { animation: none; }
+  .btn::after { animation: none; }
+  #preload .brote { animation: none; }
+}
+
+/* ---------- Envoltura de contenido y piezas puntuales ---------- */
+.contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Semilla luminosa (Escena 2) */
+.semilla-luz {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--dorado-claro);
+  box-shadow: var(--glow-dorado);
+  opacity: 0;
+  transition: opacity .8s ease;
+  animation: latido 1.6s ease-in-out infinite;
+}
+
+/* Brillo que rellena el hueco del corazón (Escena 6) */
+.glow-hueco {
+  position: fixed;
+  left: 54%; top: 40%;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(247,212,136,.9), rgba(232,178,76,0) 70%);
+  transform: translate(-50%, -50%) scale(.4);
+  opacity: 0;
+  z-index: 6;
+  transition: opacity 1.2s ease, transform 1.2s ease;
+  pointer-events: none;
+}
+.glow-hueco.ver { opacity: 1; transform: translate(-50%, -50%) scale(1); }

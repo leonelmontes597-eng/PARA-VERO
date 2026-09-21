@@ -1,0 +1,41 @@
+/* ============================================================
+   responsive.css  —  Ajustes para teléfonos (Android / iPhone).
+   ============================================================ */
+
+/* Respeta muescas y barras del sistema en iPhone */
+.escena { padding-top: calc(clamp(20px,6vw,60px) + env(safe-area-inset-top, 0px)); }
+
+/* Pantallas medianas */
+@media (max-width: 640px) {
+  .linea { max-width: 18ch; }
+  #foto-marco { width: min(84vw, 360px); }
+  #carta-hoja { max-height: 70vh; }
+}
+
+/* Pantallas pequeñas / teléfonos en vertical */
+@media (max-width: 430px) {
+  .linea       { font-size: clamp(1.25rem, 5.6vw, 1.8rem); }
+  .linea.grande{ font-size: clamp(1.7rem, 7.5vw, 2.4rem); }
+  .btn         { padding: .8em 2em; }
+  #audio-toggle { width: 40px; height: 40px; }
+  .frase-flor  { font-size: 1rem; padding: .85em 1.05em; }
+}
+
+/* Alturas bajas (teléfono horizontal) */
+@media (max-height: 480px) and (orientation: landscape) {
+  .linea { font-size: clamp(1.1rem, 4vh, 1.6rem); margin: .2em 0; }
+  .btn { margin-top: 16px; }
+  #foto-marco { width: auto; height: 62vh; aspect-ratio: 4/5; }
+  body.cine .letterbox { height: 6vh; }
+}
+
+/* En pantallas táctiles, el hover no debe "pegarse" */
+@media (hover: none) {
+  .btn:hover { color: var(--dorado-claro); background: rgba(232,178,76,.06); box-shadow: none; }
+  .girasol:hover { filter: drop-shadow(0 4px 18px rgba(200,121,31,.25)); }
+}
+
+/* Modo ligero: la clase la añade JS si el dispositivo es modesto.
+   Reduce capas costosas para mantener la fluidez. */
+body.ligero #grano { display: none; }
+body.ligero #fireflies-canvas { opacity: .6; }

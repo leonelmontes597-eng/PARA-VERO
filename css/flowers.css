@@ -1,0 +1,253 @@
+/* ============================================================
+   flowers.css  —  Girasoles SVG, jardín, álbum y carta.
+   ============================================================ */
+
+/* ---------- Jardín ---------- */
+#jardin {
+  position: fixed; inset: 0; z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Cada girasol se posiciona con left/top en línea (JS) */
+.girasol {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 4px 18px rgba(200,121,31,.25));
+  transition: filter .4s ease, transform .4s ease;
+  animation: mecerse var(--dur, 6s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  opacity: 0;
+}
+.girasol.brota { opacity: 1; transition: opacity 1.4s ease; }
+.girasol:hover, .girasol.tocada {
+  filter: drop-shadow(0 4px 26px rgba(247,212,136,.6));
+}
+.girasol.especial .disco { filter: url(#glowFuerte); }
+
+/* piezas del girasol SVG */
+.girasol .petalo { fill: var(--amarillo); transform-origin: center; }
+.girasol .petalo-2 { fill: var(--ambar); opacity: .9; }
+.girasol .disco  { fill: #4a2f12; }
+.girasol .disco-luz { fill: var(--dorado); opacity: .35; }
+.girasol .tallo  { stroke: #3c5a24; stroke-width: 3; fill: none; }
+.girasol .hoja   { fill: #3c5a24; }
+
+/* Girasol grande protagonista (Escena 2) */
+#girasol-principal {
+  position: fixed; left: 50%; top: 54%;
+  transform: translate(-50%, -50%) scale(.2);
+  z-index: 8;
+  opacity: 0;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 0 40px rgba(232,178,76,.4));
+  pointer-events: none;
+}
+#girasol-principal.crece {
+  animation: crecerFlor calc(4s * var(--ritmo)) cubic-bezier(.3,.8,.3,1) forwards;
+}
+
+/* burbuja de frase al tocar una flor */
+.frase-flor {
+  position: fixed;
+  z-index: 50;
+  max-width: min(70vw, 26ch);
+  padding: .7em 1em;
+  font-size: clamp(.85rem, 2.9vw, 1.05rem);
+  line-height: 1.4;
+  color: var(--blanco-suave);
+  background: rgba(12,8,4,.74);
+  border: 1px solid rgba(232,178,76,.32);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  box-shadow: var(--glow-suave);
+  opacity: 0; transform: translate(-50%, 8px) scale(.96);
+  pointer-events: none;
+  transition: opacity .5s ease, transform .5s ease;
+}
+.frase-flor .titulo {
+  display: block;
+  font-family: var(--script);
+  color: var(--dorado-claro);
+  font-size: 1.05em;
+  margin-bottom: .2em;
+}
+.frase-flor.ver { opacity: 1; transform: translate(-50%, 0) scale(1); }
+
+/* ============================================================
+   ESCENA 7 — Álbum de fotos
+   ============================================================ */
+#foto-marco {
+  position: relative;
+  width: min(78vw, 420px);
+  aspect-ratio: 4 / 5;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(232,178,76,.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,.6), var(--glow-suave);
+  background: var(--negro-2);
+}
+#foto-marco .slide {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 1.4s ease, transform 6s ease;
+}
+#foto-marco .slide.activa { opacity: 1; transform: scale(1); }
+
+/* video dentro de un slide */
+#foto-marco .slide video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* placeholder elegante cuando no hay foto */
+#foto-marco .slide.placeholder {
+  background:
+    radial-gradient(80% 80% at 50% 40%, rgba(232,178,76,.14), transparent 70%),
+    linear-gradient(160deg, #14100a, #0a0704);
+  display: grid; place-items: center;
+}
+#foto-marco .slide.placeholder::before {
+  content: "🌻";
+  font-size: 3rem;
+  opacity: .5;
+  filter: drop-shadow(0 0 20px rgba(232,178,76,.5));
+}
+#foto-frase {
+  margin-top: clamp(20px, 4vh, 34px);
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  color: var(--texto);
+  min-height: 1.6em;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+#foto-frase.ver { opacity: 1; transform: translateY(0); }
+#foto-frase.protagonista {
+  font-family: var(--script);
+  font-size: clamp(1.5rem, 5.4vw, 2.4rem);
+  color: var(--dorado-claro);
+  text-shadow: var(--glow-suave);
+}
+
+/* ============================================================
+   ESCENA 8 — Carta / sobre
+   ============================================================ */
+#sobre {
+  position: relative;
+  width: min(86vw, 460px);
+  cursor: pointer;
+  perspective: 1200px;
+}
+#sobre .tapa-sobre {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 8px;
+  background:
+    linear-gradient(155deg, #1c140a, #100b05);
+  border: 1px solid rgba(232,178,76,.35);
+  box-shadow: 0 18px 50px rgba(0,0,0,.6), inset 0 0 40px rgba(200,121,31,.08);
+  display: grid; place-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform .8s ease, opacity .8s ease;
+}
+/* textura sutil del papel */
+#sobre .tapa-sobre::before {
+  content: ""; position: absolute; inset: 0; opacity: .06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
+}
+#sobre .sello {
+  width: 74px; height: 74px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8b24c, #8a4d12 70%);
+  display: grid; place-items: center;
+  color: #3a2408; font-family: var(--script); font-size: 1.9rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,.5), var(--glow-suave);
+  transition: transform .5s ease, opacity .5s ease;
+}
+#sobre .pista {
+  position: absolute; bottom: 12px; left: 0; right: 0;
+  font-size: .85rem; color: var(--texto-tenue); letter-spacing: .03em;
+  animation: parpadeoTenue 2.6s ease-in-out infinite;
+}
+#sobre.abierto .tapa-sobre { transform: translateY(-10px) rotateX(6deg); opacity: 0; }
+#sobre.abierto .sello { transform: scale(1.4) rotate(20deg); opacity: 0; }
+
+/* hoja de la carta */
+#carta-hoja {
+  position: relative;
+  width: min(88vw, 560px);
+  max-height: 74vh;
+  overflow-y: auto;
+  padding: clamp(26px, 6vw, 46px);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, #fbf3df, #f3e7c8);
+  color: #3a2c14;
+  box-shadow: 0 24px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(232,178,76,.4);
+  text-align: left;
+  opacity: 0; transform: translateY(30px) scale(.96);
+  transition: opacity 1s ease, transform 1s cubic-bezier(.3,.8,.3,1);
+  -webkit-overflow-scrolling: touch;
+}
+#carta-hoja::before { /* textura de papel */
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  opacity: .5; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='c'><feTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23c)' opacity='0.06'/></svg>");
+}
+#carta-hoja.ver { opacity: 1; transform: translateY(0) scale(1); }
+#carta-hoja .saludo {
+  font-family: var(--script);
+  font-size: clamp(1.6rem, 5.4vw, 2.2rem);
+  color: #9a5a12;
+  margin-bottom: .6em;
+}
+#carta-hoja p {
+  font-size: clamp(1rem, 3.5vw, 1.15rem);
+  line-height: 1.75;
+  margin-bottom: .85em;
+  min-height: 1px;
+}
+#carta-hoja .despedida {
+  font-family: var(--script);
+  font-size: clamp(1.3rem, 4.6vw, 1.7rem);
+  color: #9a5a12;
+  margin-top: .8em;
+  text-align: right;
+}
+#carta-hoja .cerrar {
+  display: block; margin: 1.4em auto 0;
+}
+
+/* caja de la sorpresa (Escena 9) */
+#caja {
+  width: 120px; height: 96px;
+  position: relative;
+  cursor: pointer;
+  opacity: 0;
+  transition: transform .4s ease, opacity 1s ease;
+}
+#caja.ver { opacity: 1; }
+#caja .cuerpo {
+  position: absolute; bottom: 0; width: 120px; height: 74px;
+  border-radius: 8px;
+  background: linear-gradient(160deg, #d99a2e, #8a4d12);
+  box-shadow: var(--glow-dorado);
+}
+#caja .tapa {
+  position: absolute; top: 0; left: -4px; width: 128px; height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(160deg, #f0c15c, #c8791f);
+  transform-origin: top center;
+  transition: transform .7s cubic-bezier(.4,1.4,.5,1);
+}
+#caja .lazo {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  font-size: 1.6rem; z-index: 2;
+}
+#caja.abierta .tapa { transform: rotateX(-120deg) translateY(-6px); }
+#caja:hover { transform: translateY(-4px); }
