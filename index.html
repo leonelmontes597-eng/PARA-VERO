@@ -66,9 +66,11 @@
 
     <!-- ESCENA 7 -->
     <section id="escena-fotos" class="escena">
-      <div id="foto-marco"></div>
-      <p id="foto-frase"></p>
-      <div class="contenido"></div>
+      <div class="contenido">
+        <p class="galeria-titulo">Toca un recuerdo para verlo 🌻</p>
+        <div id="video-galeria"></div>
+        <div class="galeria-continuar"></div>
+      </div>
     </section>
 
     <!-- ESCENA 8 -->
@@ -104,6 +106,15 @@
   <div id="grano"></div>
   <div class="letterbox top"></div>
   <div class="letterbox bottom"></div>
+
+  <!-- Reproductor de un recuerdo (se abre al tocar un video) -->
+  <div id="video-player">
+    <video id="vp-video" playsinline></video>
+    <p id="vp-frase"></p>
+    <div id="vp-acciones">
+      <button id="vp-close" class="btn">Volver a los recuerdos</button>
+    </div>
+  </div>
 
   <!-- Indicador de avance -->
   <div id="progreso"></div>

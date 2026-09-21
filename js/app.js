@@ -179,83 +179,85 @@ async function escenaCorazon() {
   siguienteBtn(cont, escenaFotos, "Continuar");
 }
 
-/* ---------- ESCENA 7: Fotografías y videos ---------- */
+/* ---------- ESCENA 7: Galería de recuerdos (ella elige) ---------- */
 async function escenaFotos() {
   marcarProgreso(5);
   const esc = irAEscena("escena-fotos");
-  const marco = $("#foto-marco");
-  const fraseEl = $("#foto-frase");
-  marco.innerHTML = "";
+  const galeria = $("#video-galeria");
+  const contCont = esc.querySelector(".galeria-continuar");
+  galeria.innerHTML = "";
+  contCont.innerHTML = "";
 
   const items = CONFIG.fotos;
 
-  // construir cada slide en orden (foto = div con fondo; video = <video> dentro del div)
-  const slides = items.map(item => {
-    const s = document.createElement("div");
-    s.className = "slide";
+  // construir una miniatura tocable por cada recuerdo
+  items.forEach((item, i) => {
+    const thumb = document.createElement("div");
+    thumb.className = "thumb";
+    thumb.tabIndex = 0;
+
     if (item.tipo === "video") {
       const v = document.createElement("video");
-      v.muted = true; v.loop = true; v.playsInline = true;
+      v.muted = true; v.playsInline = true;
       v.setAttribute("playsinline", ""); v.setAttribute("muted", "");
-      v.preload = "auto";
+      v.preload = "metadata";
       v.src = item.src;
-      s.appendChild(v);
-      s._video = v;
+      // mostrar un fotograma como portada
+      v.addEventListener("loadeddata", () => { try { v.currentTime = 0.1; } catch (e) {} }, { once: true });
+      thumb.appendChild(v);
     }
-    marco.appendChild(s);
-    return s;
+    const ico = document.createElement("div");
+    ico.className = "play-ico";
+    ico.textContent = "▶";
+    thumb.appendChild(ico);
+
+    if (item.frase) {
+      const fr = document.createElement("div");
+      fr.className = "thumb-frase";
+      fr.textContent = item.frase;
+      thumb.appendChild(fr);
+    }
+
+    const abrir = () => reproducirRecuerdo(item, thumb);
+    thumb.addEventListener("click", abrir);
+    thumb.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(); } });
+
+    galeria.appendChild(thumb);
+    setTimeout(() => thumb.classList.add("ver"), 150 + i * 130);
   });
 
-  // cargar todo en paralelo (con placeholder elegante si falla)
-  await Promise.all(items.map((item, i) => new Promise(res => {
-    const s = slides[i];
-    if (item.tipo === "video") {
-      let listo = false;
-      const fin = () => { if (!listo) { listo = true; res(); } };
-      s._video.addEventListener("loadeddata", fin, { once: true });
-      s._video.addEventListener("error", () => {
-        s.classList.add("placeholder");
-        if (s._video) { s._video.remove(); s._video = null; }
-        fin();
-      }, { once: true });
-      setTimeout(fin, 2500); // no bloquear demasiado la entrada
-    } else {
-      const img = new Image();
-      img.onload = () => { s.style.backgroundImage = `url("${item.src}")`; res(); };
-      img.onerror = () => { s.classList.add("placeholder"); res(); };
-      img.src = item.src;
-    }
-  })));
+  // botón para continuar hacia la carta (siempre disponible)
+  siguienteBtn(contCont, escenaCarta, "Continuar");
+}
 
-  await esperar(600);
-  for (let i = 0; i < slides.length; i++) {
-    // ocultar y pausar todos
-    slides.forEach(s => { s.classList.remove("activa"); if (s._video) s._video.pause(); });
+/* Abre el reproductor y reproduce ese recuerdo completo, con sonido.
+   Como lo dispara el toque de ella, el navegador permite el audio. */
+function reproducirRecuerdo(item, thumb) {
+  const player = $("#video-player");
+  const v = $("#vp-video");
+  const frase = $("#vp-frase");
 
-    const cur = slides[i];
-    cur.classList.add("activa");
-    if (cur._video) { try { cur._video.currentTime = 0; cur._video.play().catch(() => {}); } catch (e) {} }
+  frase.textContent = item.frase || "";
+  v.src = item.src;
+  v.muted = false;
+  v.currentTime = 0;
+  v.loop = false;
 
-    fraseEl.classList.remove("ver", "protagonista");
-    fraseEl.textContent = items[i].frase;
-    if (i === slides.length - 1) fraseEl.classList.add("protagonista");
-    await esperar(300);
-    fraseEl.classList.add("ver");
-    if (window.Audio2) window.Audio2.campana(494);
+  player.classList.add("abierto");
+  if (navigator.vibrate) navigator.vibrate(10);
 
-    // los videos se ven un poco más de tiempo
-    const esUltima = i === slides.length - 1;
-    const dur = esUltima ? 3800 : (cur._video ? 3800 : 2600);
-    await esperar(dur);
-    if (!esUltima) fraseEl.classList.remove("ver");
-  }
+  const cerrar = () => {
+    v.pause();
+    player.classList.remove("abierto");
+    if (thumb) thumb.classList.add("vista");
+    v.onended = null;
+  };
+  $("#vp-close").onclick = cerrar;
+  v.onended = cerrar;
 
-  // pausar cualquier video antes de continuar
-  slides.forEach(s => { if (s._video) s._video.pause(); });
-
-  const cont = esc.querySelector(".contenido");
-  cont.innerHTML = "";
-  siguienteBtn(cont, escenaCarta, "Continuar");
+  // reproducir con sonido (dentro del gesto de tocar)
+  const p = v.play();
+  if (p && p.catch) p.catch(() => { /* si algo falla, ella puede usar los controles del video */ v.controls = true; });
 }
 
 /* ---------- ESCENA 8: La carta ---------- */

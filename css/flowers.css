@@ -77,62 +77,106 @@
 .frase-flor.ver { opacity: 1; transform: translate(-50%, 0) scale(1); }
 
 /* ============================================================
-   ESCENA 7 — Álbum de fotos
+   ESCENA 7 — Galería de recuerdos (ella elige qué ver)
    ============================================================ */
-#foto-marco {
-  position: relative;
-  width: min(78vw, 420px);
-  aspect-ratio: 4 / 5;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(232,178,76,.3);
-  box-shadow: 0 20px 60px rgba(0,0,0,.6), var(--glow-suave);
-  background: var(--negro-2);
-}
-#foto-marco .slide {
-  position: absolute; inset: 0;
-  background-size: cover; background-position: center;
-  opacity: 0;
-  transform: scale(1.08);
-  transition: opacity 1.4s ease, transform 6s ease;
-}
-#foto-marco .slide.activa { opacity: 1; transform: scale(1); }
-
-/* video dentro de un slide */
-#foto-marco .slide video {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-}
-
-/* placeholder elegante cuando no hay foto */
-#foto-marco .slide.placeholder {
-  background:
-    radial-gradient(80% 80% at 50% 40%, rgba(232,178,76,.14), transparent 70%),
-    linear-gradient(160deg, #14100a, #0a0704);
-  display: grid; place-items: center;
-}
-#foto-marco .slide.placeholder::before {
-  content: "🌻";
-  font-size: 3rem;
-  opacity: .5;
-  filter: drop-shadow(0 0 20px rgba(232,178,76,.5));
-}
-#foto-frase {
-  margin-top: clamp(20px, 4vh, 34px);
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
+.galeria-titulo {
+  font-size: clamp(1.05rem, 3.6vw, 1.4rem);
   color: var(--texto);
-  min-height: 1.6em;
-  opacity: 0; transform: translateY(10px);
-  transition: opacity .8s ease, transform .8s ease;
+  margin-bottom: clamp(16px, 3vh, 26px);
+  text-shadow: 0 0 24px rgba(232,178,76,.15);
 }
-#foto-frase.ver { opacity: 1; transform: translateY(0); }
-#foto-frase.protagonista {
+
+#video-galeria {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(10px, 2.6vw, 16px);
+  max-width: min(92vw, 560px);
+}
+
+/* cada recuerdo = una miniatura tocable */
+.thumb {
+  position: relative;
+  width: clamp(88px, 27vw, 150px);
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(232,178,76,.35);
+  box-shadow: 0 8px 26px rgba(0,0,0,.5);
+  background: var(--negro-2);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(12px) scale(.96);
+  transition: opacity .6s ease, transform .5s ease, box-shadow .4s ease, border-color .4s ease;
+}
+.thumb.ver { opacity: 1; transform: translateY(0) scale(1); }
+.thumb video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  pointer-events: none;
+}
+.thumb::after { /* oscurece un poco para que resalte el ícono */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.05));
+}
+.thumb .play-ico {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(232,178,76,.9); color: #3a2408;
+  font-size: 1rem; z-index: 2;
+  box-shadow: var(--glow-suave);
+  transition: transform .3s ease;
+}
+.thumb .thumb-frase {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 8px 8px 9px;
+  font-size: clamp(.72rem, 2.4vw, .9rem);
+  color: var(--blanco-suave);
+  text-shadow: 0 1px 4px rgba(0,0,0,.8);
+}
+.thumb.vista { border-color: rgba(232,178,76,.7); }
+.thumb.vista .play-ico { background: rgba(60,90,36,.9); color: #dfeccf; }
+.thumb:hover, .thumb:focus-visible { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 32px rgba(200,121,31,.35); outline: none; }
+.thumb:hover .play-ico { transform: translate(-50%, -50%) scale(1.1); }
+
+.galeria-continuar { margin-top: clamp(18px, 3.4vh, 30px); min-height: 1px; }
+
+/* ---------- Reproductor de un recuerdo ---------- */
+#video-player {
+  position: fixed; inset: 0; z-index: 70;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3vh, 24px);
+  padding: calc(20px + env(safe-area-inset-top,0px)) 18px calc(20px + env(safe-area-inset-bottom,0px));
+  background: rgba(3,2,1,.94);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity .5s ease;
+  pointer-events: auto;
+}
+#video-player.abierto { display: flex; opacity: 1; }
+#vp-video {
+  max-width: min(92vw, 460px);
+  max-height: 64vh;
+  border-radius: 12px;
+  background: #000;
+  box-shadow: 0 24px 70px rgba(0,0,0,.7), var(--glow-suave);
+}
+#vp-frase {
   font-family: var(--script);
-  font-size: clamp(1.5rem, 5.4vw, 2.4rem);
+  font-size: clamp(1.4rem, 5vw, 2.1rem);
   color: var(--dorado-claro);
+  text-align: center;
   text-shadow: var(--glow-suave);
+  min-height: 1.2em;
 }
+#vp-acciones { display: flex; gap: 12px; }
+#vp-close { margin-top: 0; opacity: 1; transform: none; }
 
 /* ============================================================
    ESCENA 8 — Carta / sobre
