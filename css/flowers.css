@@ -295,3 +295,61 @@
 }
 #caja.abierta .tapa { transform: rotateX(-120deg) translateY(-6px); }
 #caja:hover { transform: translateY(-4px); }
+
+/* ============================================================
+   ESCENA 10 — Ramo de girasoles + frase del día
+   ============================================================ */
+.ramo {
+  position: relative;
+  width: min(80vw, 320px);
+  height: clamp(190px, 30vh, 270px);
+  margin: clamp(6px, 1.5vh, 16px) auto 0;
+  transform-origin: bottom center;
+  animation: mecerse 7s ease-in-out infinite;
+}
+.ramo .girasol {
+  position: absolute;
+  animation: none;            /* sin oscilación individual: la mece el ramo entero */
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s cubic-bezier(.3,.9,.3,1);
+  filter: drop-shadow(0 6px 24px rgba(200,121,31,.4));
+}
+.ramo .girasol.brota { opacity: 1; }
+
+/* lazo dorado que ata el ramo */
+.ramo-lazo {
+  position: absolute;
+  bottom: 26px; left: 50%;
+  width: 48px; height: 22px;
+  border-radius: 7px;
+  background: linear-gradient(160deg, #f0c15c, #c8791f);
+  box-shadow: var(--glow-suave);
+  transform: translateX(-50%) scale(.6);
+  opacity: 0;
+  transition: opacity .8s ease, transform .8s cubic-bezier(.4,1.4,.5,1);
+  z-index: 6;
+}
+.ramo-lazo::before { /* nudo central */
+  content: "";
+  position: absolute; top: 50%; left: 50%;
+  width: 14px; height: 14px; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 30%, #f7d488, #a85e12);
+}
+.ramo-lazo.ver { opacity: 1; transform: translateX(-50%) scale(1); }
+
+.final-frase-dia {
+  font-family: var(--script);
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  color: var(--dorado-claro);
+  text-shadow: var(--glow-suave);
+  margin-top: clamp(8px, 2vh, 16px);
+  max-width: 22ch;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+.final-frase-dia.ver { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ramo { animation: none; }
+}

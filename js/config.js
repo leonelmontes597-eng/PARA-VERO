@@ -88,6 +88,7 @@ const CONFIG = {
       "Pero me alegra que nuestros caminos se hayan cruzado.",
       "Y si algún día volvemos a mirar esto, espero que podamos sonreír recordando cómo comenzó todo."
     ],
+    fraseDia: "Feliz día de las flores amarillas, Vero. 🌻💛",
     reiniciar: "Volver a vivirlo"
   },
 

@@ -376,37 +376,51 @@ async function escenaFinal() {
   const esc = irAEscena("escena-final");
   const cont = esc.querySelector(".contenido");
   cont.innerHTML = "";
+  cont.style.transition = "opacity 1s ease";
+  cont.style.opacity = "1";
 
   // el jardín vuelve, con brillo
   $("#jardin").style.opacity = "1";
   jardin.atenuar(false);
   jardin.flores.forEach(f => f.classList.add("brota"));
 
+  // 1) frases de cierre
   pintarLineas(cont, CONFIG.final.lineas);
   await revelarLineas(cont, 2400, 800);
-  await esperar(800);
+  await esperar(1200);
 
-  // título luminoso
+  // 2) transición limpia hacia el cuadro final
+  cont.style.opacity = "0";
+  await esperar(1000);
+  cont.innerHTML = "";
+  cont.style.opacity = "1";
+
+  // 3) título luminoso
   const titulo = document.createElement("div");
   titulo.className = "titulo-final";
   titulo.textContent = "🌻 " + CONFIG.nombre + " 🌻";
   titulo.style.opacity = "0";
-  titulo.style.transition = "opacity 1.6s ease";
+  titulo.style.transition = "opacity 1.4s ease";
   cont.appendChild(titulo);
   requestAnimationFrame(() => titulo.style.opacity = "1");
   if (window.Audio2) window.Audio2.brillo();
-  await esperar(1400);
+  await esperar(1200);
 
-  const firma = document.createElement("p");
-  firma.className = "linea pequena";
-  firma.textContent = CONFIG.firma;
-  cont.appendChild(firma);
-  requestAnimationFrame(() => firma.classList.add("ver"));
+  // 4) ramo de girasoles grandes
+  construirRamo(cont);
+  await esperar(1600);
 
+  // 5) frase del día
+  const fdia = document.createElement("p");
+  fdia.className = "final-frase-dia";
+  fdia.textContent = CONFIG.final.fraseDia;
+  cont.appendChild(fdia);
+  requestAnimationFrame(() => fdia.classList.add("ver"));
+  if (window.Audio2) window.Audio2.brillo();
   marcarProgreso(9);
-  await esperar(2200);
+  await esperar(2400);
 
-  // reiniciar
+  // 6) reiniciar
   const btn = document.createElement("button");
   btn.className = "btn";
   btn.textContent = CONFIG.final.reiniciar;
@@ -414,8 +428,47 @@ async function escenaFinal() {
   requestAnimationFrame(() => btn.classList.add("ver"));
   btn.addEventListener("click", () => location.reload());
 
-  // las partículas se van apagando poco a poco
   particulas.ambiente();
+}
+
+/* Construye un ramo de girasoles grandes (en abanico) que florece. */
+function construirRamo(cont) {
+  const ramo = document.createElement("div");
+  ramo.className = "ramo";
+  const disposicion = [
+    { a: -34, s: 78,  z: 1 },
+    { a: -17, s: 92,  z: 2 },
+    { a:   0, s: 108, z: 3 },
+    { a:  17, s: 92,  z: 2 },
+    { a:  34, s: 78,  z: 1 }
+  ];
+  const els = disposicion.map(f => {
+    const el = document.createElement("div");
+    el.className = "girasol";
+    el.style.width = f.s + "px";
+    el.style.zIndex = f.z;
+    el.style.left = "50%";
+    el.style.bottom = "44px";
+    el.style.transformOrigin = "bottom center";
+    el.style.transform = `translateX(-50%) rotate(${f.a}deg) scale(.5)`;
+    el.innerHTML = girasolSVG({ conTallo: true });
+    ramo.appendChild(el);
+    return { el, a: f.a };
+  });
+  // lazo dorado que ata el ramo
+  const lazo = document.createElement("div");
+  lazo.className = "ramo-lazo";
+  ramo.appendChild(lazo);
+
+  cont.appendChild(ramo);
+
+  // florecen escalonadas
+  els.forEach((o, i) => setTimeout(() => {
+    o.el.classList.add("brota");
+    o.el.style.transform = `translateX(-50%) rotate(${o.a}deg) scale(1)`;
+  }, 150 + i * 170));
+  setTimeout(() => lazo.classList.add("ver"), 150 + els.length * 170);
+  return ramo;
 }
 
 /* ============================================================
